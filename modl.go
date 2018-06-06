@@ -26,6 +26,31 @@ func (n NoKeysErr) Error() string {
 	return fmt.Sprintf("Could not find keys for table %v", n.Table)
 }
 
+//for App APIs to handle hook errors
+type ModlErr struct {
+	// ErrorCode is the code uniquely identifying an error
+	ErrorCode int `json:"error_code"`
+	// Message is the error message that may be displayed to end users
+	Message string `json:"message"`
+	// DeveloperMessage is the error message that is mainly meant for developers
+	DeveloperMessage string `json:"developer_message,omitempty"`
+	// Details specifies the additional error information
+	Details map[string]interface{} `json:"details,omitempty"`
+}
+
+func NewModlErr(errorcode int, message string, devmsg string, details map[string]interface{}) *ModlErr {
+	return &ModlErr{
+		ErrorCode:        errorcode,
+		Message:          message,
+		DeveloperMessage: devmsg,
+		Details:          details,
+	}
+}
+
+func (e *ModlErr) Error() string {
+	return e.Message
+}
+
 const versFieldConst = "[modl_ver_field]"
 
 // OptimisticLockError is returned by Update() or Delete() if the
